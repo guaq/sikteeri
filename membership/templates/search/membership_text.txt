@@ -1,0 +1,5 @@
+{{ object }}
+{{ object.person.first_name }}
+{{ object.person.given_names }}
+{{ object.person.last_name }}
+

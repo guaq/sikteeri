@@ -1,6 +1,7 @@
 SECRET_KEY = ''
 BANK_ACCOUNT_NUMBER = "123-123"
 BILLING_EMAIL_FROM = "foobar@kapsi.fi"
+HAYSTACK_WHOOSH_PATH = 'sikteeri_whoosh_index'
 
 # Uncomment the following lines to enable more verbose stdout logging.
 #import logging
