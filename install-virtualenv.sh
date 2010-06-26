@@ -39,7 +39,7 @@ if [[ ! -a $ENVDIR/bin/pip ]]; then
     $ENVDIR/bin/easy_install pip || fatal "Could not install pip in virtualenv"
 fi
 
-for pkg in django simplejson; do
+for pkg in django simplejson whoosh django-haystack; do
     $ENVDIR/bin/pip install $pkg || fatal "Could not install $pkg in $ENVDIR"
 done
 

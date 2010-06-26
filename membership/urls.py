@@ -5,6 +5,8 @@ import django.views.generic.list_detail
 from membership.models import *
 from membership.forms import *
 
+from haystack.query import SearchQuerySet
+
 urlpatterns = patterns('',
     (r'jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('membership')}),
     
@@ -29,12 +31,14 @@ urlpatterns = patterns('',
     url(r'memberships/handle_json/$', 'membership.views.handle_json', name='membership_handle_json'),
     
     url(r'static/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '../membership/static/'}),
+    (r'^search/', include('haystack.urls')),
 )
 
 # FIXME: should require admin priviledge, too.
 @login_required
 def limited_object_list(*args, **kwargs):
     return django.views.generic.list_detail.object_list(*args, **kwargs)
+
 
 urlpatterns += patterns('django.views.generic',
 
@@ -63,6 +67,7 @@ urlpatterns += patterns('django.views.generic',
          'template_name': 'membership/membership_list.html',
          'template_object_name': 'member',
          'paginate_by': 100}, name='all_memberships'),
+
 
     url(r'bills/$', limited_object_list,
         {'queryset': Bill.objects.all(),

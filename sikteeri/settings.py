@@ -83,8 +83,12 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.humanize',
     'django.contrib.comments',
+    'haystack',
     'membership',
 )
+
+HAYSTACK_SITECONF = 'sikteeri.search_sites'
+HAYSTACK_SEARCH_ENGINE = 'whoosh'
 
 SESSION_COOKIE_SECURE = True
 
