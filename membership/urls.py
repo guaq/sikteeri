@@ -39,6 +39,14 @@ urlpatterns = patterns('',
 def limited_object_list(*args, **kwargs):
     return django.views.generic.list_detail.object_list(*args, **kwargs)
 
+def search(request, string,
+           template_name='membership/membership_list.html'):
+    qs = SearchQuerySet().models(Membership).filter(content=string).load_all()
+    
+    return django.views.generic.list_detail.object_list(request, queryset=qs,
+                                                        template_name=template_name,
+                                                        template_object_name='member',
+                                                        paginate_by=100)
 
 urlpatterns += patterns('django.views.generic',
 
@@ -62,6 +70,11 @@ urlpatterns += patterns('django.views.generic',
          'template_name': 'membership/membership_list.html',
          'template_object_name': 'member',
          'paginate_by': 100}, name='disabled_memberships'),
+
+    url(r'^memberships/inline/(?P<string>\w+)/$', search,
+        {'template_name': 'membership/membership_queryset_inline.html'}),
+    url(r'^memberships/(?P<string>\w+)/$', search),
+
     url(r'memberships/$', limited_object_list,
         {'queryset': Membership.objects.all(),
          'template_name': 'membership/membership_list.html',

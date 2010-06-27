@@ -1,5 +1,8 @@
 {{ object }}
+{{ object.id }}
 {{ object.person.first_name }}
 {{ object.person.given_names }}
 {{ object.person.last_name }}
-
+{{ object.billing_contact }}
+{{ object.tech_contact }}
+{{ object.organization }}

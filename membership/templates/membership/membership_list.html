@@ -2,23 +2,11 @@
 {% load i18n %}
 
 {% block content %}
-{% include "membership/paginating_snippet.html" %}
-<ul id="member_list">
-{% for member in member_list %}
-  {% if member.status == "N" %}
-    <li class="preapprovable" id="{{ member.id }}">
-  {% else %}
-    <li id="{{ member.id }}">
-  {% endif %}
-      <span class="name"><a href="{% url membership_edit member.id %}">{{ member }}</a></span>
-      <span class="status">{{ member.get_status_display }}</span>
-    </li>
-
-{% empty %}
-{% trans "No membership matches this filter, try seeing the full list" %}
-{% endfor %}
-</ul>
-{% include "membership/paginating_snippet.html" %}
+{% if member_list and member_list.0.object %}
+{% include "membership/membership_queryset_inline.html" %}
+{% else %}
+{% include "membership/membership_object_list_inline.html" %}
+{% endif %}
 
 <script type="text/javascript">
 /**
