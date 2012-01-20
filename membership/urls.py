@@ -4,13 +4,21 @@ from django.conf.urls.defaults import *
 from django.shortcuts import redirect
 import django.views.generic.list_detail
 
+from djangorestframework.views import ListOrCreateModelView, InstanceModelView
+
 from membership.models import *
 from membership.forms import *
+from membership.resources import *
 
 ENTRIES_PER_PAGE=30
 
 urlpatterns = patterns('',
     (r'jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('membership')}),
+
+    # Brand-spanking new RESTful stuff, for AJAX usage at first
+    url(r'^ajax/memberships/new$', ListOrCreateModelView.as_view(resource=NewMembershipResource)),
+    url(r'^rest/memberships/(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=MembershipResource)),
+    # End of kool kat REST
 
     url(r'application/person/$', 'membership.views.person_application', name='person_application'),
     url(r'application/organization/$', 'membership.views.organization_application',
@@ -203,3 +211,18 @@ urlpatterns += patterns('django.views.generic',
     url(r'application/error/$', 'simple.direct_to_template',
         {'template': 'membership/new_application_error.html'}, name='new_application_error'),
 )
+
+
+
+# from django.conf.urls.defaults import patterns, url
+# from djangorestframework.resources import ModelResource
+# from djangorestframework.views import ListOrCreateModelView, InstanceModelView
+# from myapp.models import MyModel
+
+# class MyResource(ModelResource):
+#     model = MyModel
+
+# urlpatterns = patterns('',
+#     url(r'^$', ListOrCreateModelView.as_view(resource=MyResource)),
+#     url(r'^(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=MyResource)),
+# )
