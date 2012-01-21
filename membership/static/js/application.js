@@ -4,21 +4,48 @@
 var aliasAvailability = {};
 function aliasAvailable (alias, callbackFunction) {
     if (aliasAvailability[alias] === undefined) {
-	jQuery.post("handle_json/", '{"requestType": "ALIAS_AVAILABLE", "payload": "' + alias + '"}',
-                    function(){
-			return function(data){
-			    if (data == 'true') {
-				aliasAvailability[alias] = true;
-			    }
-			    else if (data == 'false') {
-				aliasAvailability[alias] = false;
-			    }
-			    callbackFunction(aliasAvailability[alias]);
-			}
-		    }());
+	$.ajax("../../api/available/aliases/" + alias + "/", {
+	    statusCode: {
+		200: function() {
+		    aliasAvailability[alias] = true;
+		    callbackFunction(true);
+		},
+		404: function() {
+		    aliasAvailability[alias] = false;
+		    callbackFunction(false);
+		},
+		503: function() {
+		    callbackFunction(undefined);
+		}
+	    }
+	});
     }
     else {
 	callbackFunction(aliasAvailability[alias]);
+    }
+}
+
+var aliasValidity = {};
+function aliasValid (alias, callbackFunction) {
+    if (aliasValidity[alias] === undefined) {
+	$.ajax("../../api/valid/aliases/" + alias + "/", {
+	    statusCode: {
+		200: function() {
+		    aliasValidity[alias] = true;
+		    callbackFunction(true);
+		},
+		404: function() {
+		    aliasValidity[alias] = false;
+		    callbackFunction(false);
+		},
+		503: function() {
+		    callbackFunction(undefined);
+		}
+	    }
+	});
+    }
+    else {
+	callbackFunction(aliasValidity[alias]);
     }
 }
 

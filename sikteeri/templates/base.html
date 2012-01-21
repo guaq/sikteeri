@@ -12,7 +12,7 @@
         @import "{{ MEDIA_URL }}/static/css/form.css";{% if user.is_authenticated %}
         @import "{{ MEDIA_URL }}/static/css/blue.css";{% endif %}
     </style>
-    <script type="text/javascript" src="{{ MEDIA_URL }}/static/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}/static/js/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="{{ MEDIA_URL }}/static/js/django-csrf.js"></script>
     <script type="text/javascript" src="{% url django.views.i18n.javascript_catalog %}"></script>
     {% block extra_head %}{% endblock %}

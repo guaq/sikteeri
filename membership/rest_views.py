@@ -1,4 +1,6 @@
 import re
+import logging
+logger = logging.getLogger("membership.rest_views")
 
 from django.utils.html import escape
 
@@ -88,22 +90,24 @@ class EscapedMembershipInstanceView(InstanceModelView, EscapedMembershipResource
 # Alias views
 class AvailableAliasView(View):
     permissions = (PerUserThrottling, FullAnonAccess,)
-    throttle = '6/min'
+    throttle = '12/min'
 
     def get(self, request, name):
         if Alias.objects.filter(name__iexact=name).count() > 0:
+            logger.debug("Failed alias availability check: %s" % name)
             return Response(status.HTTP_404_NOT_FOUND)
 
+        logger.debug("Successful alias availability check: %s" % name)
         return Response(status.HTTP_200_OK, {'name': name, 'available': True})
 
 class ValidAliasView(View):
     permissions = (PerUserThrottling, FullAnonAccess,)
-    throttle = '6/min'
+    throttle = '12/min'
 
     def get(self, request, name):
-        if Alias.objects.filter(name__iexact=name).count() > 0:
-            return Response(status.HTTP_404_NOT_FOUND)
         if re.match(VALID_USERNAME_RE, name) == None:
+            logger.debug("Failed alias validity check: %s" % name)
             return Response(status.HTTP_404_NOT_FOUND)
+        logger.debug("Successfull alias validity check: %s" % name)
         return Response(status.HTTP_200_OK,
-                        {'name': name, 'available': True, 'valid': True})
+                        {'name': name, 'valid': True})

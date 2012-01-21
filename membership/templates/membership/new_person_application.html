@@ -295,35 +295,38 @@ $("#id_given_names").focusout(function() {
 // Validate user name
 // http://jqueryfordesigners.com/using-ajax-to-validate-forms/
 $(document).ready(function () {
-  var validateUsername = $('#unix_account_availability');
-  $('#id_unix_login').keyup(function () {
-    var t = this;
-    if (this.value != this.lastValue) {
-      if (this.timer) clearTimeout(this.timer);
-      validateUsername.removeClass('error').html('<img src="{{ MEDIA_URL }}/static/images/ajax-loader.gif" height="16" width="16" /> Tarkistetaan...');
+    var validateUsername = $('#unix_account_availability');
+    $('#id_unix_login').keyup(function () {
+	var t = this;
+	if (this.value == this.lastValue) return;
+	if (this.timer) clearTimeout(this.timer);
 
-      this.timer = setTimeout(function () {
-        $.ajax({
-          url: 'handle_json/',
-          data: '{"requestType": "VALIDATE_ALIAS", "payload": "' + t.value + '"}',
-          dataType: 'json',
-          type: 'post',
-          success: function (j) {
-            if (j.exists) {
-              validateUsername.html("Tunnus varattu");
-            } else if (!j.valid) {
-              validateUsername.html("Tunnus ei täytä vaatimuksia");
-            } else {
-              validateUsername.html("OK");
-            }
+	validateUsername.removeClass('error');
+	validateUsername.html('<img src="{{ MEDIA_URL }}/static/images/ajax-loader.gif" height="16" width="16" /> Tarkistetaan...');
 
-          }
-        });
-      }, 100);
+	function checkAvailabilityAndValidity() {
+	    aliasValid(t.value, function (validity) {
+		if (validity) {
+  		    aliasAvailable(t.value, function (availability) {
+ 			if (availability) {
+			    validateUsername.html("OK");
+			} else if (validity == undefined) {
+			    validateUsername.html("Hidasta tahtia");
+			} else {
+			    validateUsername.html("Tunnus varattu");
+			}
+		    });
+		} else if (validity == undefined) {
+		    validateUsername.html("Hidasta tahtia");
+		} else {
+		    validateUsername.html("Tunnus ei täytä vaatimuksia");
+		}
+	    });
+	}
 
-      this.lastValue = this.value;
-    }
-  });
+	this.timer = setTimeout(checkAvailabilityAndValidity, 200);
+	this.lastValue = this.value;
+    });
 });
 </script>
 
