@@ -72,20 +72,18 @@ _403_FORBIDDEN_RESPONSE = ErrorResponse(
     {'detail': 'You do not have permission to access this resource. ' +
       'You may need to login or otherwise authenticate the request.'})
 
-class ReadMembershipPermission(IsAuthenticated):
+class MembershipResourcePermission(IsAuthenticated):
     def check_permission(self, user):
-        super(ReadMembershipPermission, self).check_permission(user)
         if not user.has_perm('membership.read_members'):
             raise _403_FORBIDDEN_RESPONSE
 
-class ManageMembershipPermission(IsAuthenticated):
-    def check_permission(self, user):
-        super(ManageMembershipPermission, self).check_permission(user)
-        if not user.has_perm('membership.manage_members'):
+        if self.view.method not in ('GET', 'HEAD') and \
+            not user.has_perm('membership.manage_members'):
             raise _403_FORBIDDEN_RESPONSE
 
 class EscapedMembershipInstanceView(InstanceModelView, EscapedMembershipResourceJSONView):
-    pass
+    permissions = (MembershipResourcePermission, )
+
 
 # Alias views
 class AvailableAliasView(View):
