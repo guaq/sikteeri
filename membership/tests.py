@@ -745,37 +745,25 @@ class MemberApplicationTest(TestCase):
 
         login = self.client.login(username='admin', password='dhtn')
         self.failUnless(login, 'Could not log in')
-        json_response = self.client.post('/membership/application/handle_json/',
-                                             simplejson.dumps({"requestType": "MEMBERSHIP_DETAIL", "payload": new.id}),
-                                             content_type="application/json")
-        self.assertEqual(json_response.status_code, 200)
-        json_dict = simplejson.loads(json_response.content)
-        self.assertEqual(json_dict['contacts']['person']['first_name'],
+        response = self.client.get('/membership/api/memberships/%i/' % new.id)
+        self.assertEqual(response.status_code, 200)
+        d = simplejson.loads(response.content)
+        self.assertEqual(d['person']['first_name'],
                          u'&lt;b&gt;Yrjö&lt;/b&gt;')
-        self.assertEqual(json_dict['extra_info'],
+        self.assertEqual(d['extra_info'],
                          '&lt;iframe src=&quot;http://www.kapsi.fi&quot; width=200 height=100&gt;&lt;/iframe&gt;')
 
 
-    def _validate_alias(self, alias):
-        json_response = self.client.post('/membership/application/handle_json/',
-            simplejson.dumps({"requestType": "VALIDATE_ALIAS", "payload": alias}),
-                             content_type="application/json")
-        self.assertEqual(json_response.status_code, 200)
-        json_dict = simplejson.loads(json_response.content)
-        return json_dict
-
     def test_validate_alias_ajax(self):
+        valid_url = '/membership/api/valid/aliases/%s/'
+        available_url = '/membership/api/available/aliases/%s/'
+
         alias = Alias(name='validalias', owner_id=1)
+        self.assertEqual(200, self.client.get(available_url % alias.name).status_code)
+        self.assertEqual(200, self.client.get(valid_url % alias.name).status_code)
         alias.save()
-        result = self._validate_alias('usernotfound')
-        self.assertEqual(result['exists'], False)
-        self.assertEqual(result['valid'], True)
-        result = self._validate_alias('user-')
-        self.assertEqual(result['exists'], False)
-        self.assertEqual(result['valid'], False)
-        result = self._validate_alias('validalias')
-        self.assertEqual(result['exists'], True)
-        self.assertEqual(result['valid'], True)
+        self.assertEqual(404, self.client.get(available_url % alias.name).status_code)
+        self.assertEqual(404, self.client.get(valid_url % alias.name).status_code)
         alias.delete()
 
 class PhoneNumberFieldTest(TestCase):

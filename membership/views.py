@@ -25,12 +25,10 @@ from models import *
 from services.models import Alias, Service, ServiceType
 
 from forms import PersonApplicationForm, OrganizationApplicationForm, PersonContactForm, LoginField, ServiceForm
-from utils import log_change, serializable_membership_info, admtool_membership_details
+from utils import log_change, admtool_membership_details
 from utils import bake_log_entries
 from public_memberlist import public_memberlist_data
 from unpaid_members import unpaid_members_data
-
-from services.views import check_alias_availability, validate_alias
 
 from management.commands.csvbills import process_csv as payment_csv_import
 from decorators import trusted_host_required
@@ -731,47 +729,6 @@ def membership_convert_to_organization(request, id, template_name='membership/me
                               {'form': form,
                                'membership': membership },
                               context_instance=RequestContext(request))
-
-@permission_required('membership.manage_members')
-@transaction.commit_on_success
-def membership_preapprove_json(request, id):
-    get_object_or_404(Membership, id=id).preapprove(request.user)
-    return HttpResponse(id, mimetype='text/plain')
-
-@permission_required('membership.manage_members')
-@transaction.commit_on_success
-def membership_approve_json(request, id):
-    get_object_or_404(Membership, id=id).approve(request.user)
-    return HttpResponse(id, mimetype='text/plain')
-
-@permission_required('membership.read_members')
-def membership_detail_json(request, id):
-    membership = get_object_or_404(Membership, id=id)
-    #sleep(1)
-    json_obj = serializable_membership_info(membership)
-    return HttpResponse(simplejson.dumps(json_obj, sort_keys=True, indent=4),
-                        mimetype='application/json')
-    # return HttpResponse(simplejson.dumps(json_obj, sort_keys=True, indent=4),
-    #                    mimetype='text/plain')
-
-# Public access
-def handle_json(request):
-    logger.debug("RAW POST DATA: %s" % request.raw_post_data)
-    msg = simplejson.loads(request.raw_post_data)
-    funcs = {'PREAPPROVE': membership_preapprove_json,
-             'APPROVE': membership_approve_json,
-             'MEMBERSHIP_DETAIL': membership_detail_json,
-             'ALIAS_AVAILABLE': check_alias_availability,
-             'VALIDATE_ALIAS': validate_alias}
-    if not funcs.has_key(msg['requestType']):
-        raise NotImplementedError()
-    logger.debug("AJAX call %s, payload: %s" % (msg['requestType'],
-                                                 unicode(msg['payload'])))
-    try:
-        return funcs[msg['requestType']](request, msg['payload'])
-    except Exception, e:
-        logger.critical("%s" % traceback.format_exc())
-        raise e
 
 @login_required
 def test_email(request, template_name='membership/test_email.html'):

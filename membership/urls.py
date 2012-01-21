@@ -4,21 +4,45 @@ from django.conf.urls.defaults import *
 from django.shortcuts import redirect
 import django.views.generic.list_detail
 
-from djangorestframework.views import ListOrCreateModelView, InstanceModelView
+from djangorestframework.views import View, ListModelView, InstanceModelView
+from djangorestframework.response import Response
+from djangorestframework import status
 
 from membership.models import *
 from membership.forms import *
-from membership.resources import *
+
+from membership.rest_views import SpecializedQuerySetListModelView as SQSLMV
+from membership.rest_views import MembershipResource, EscapedMembershipInstanceView
+from membership.rest_views import AvailableAliasView, ValidAliasView
 
 ENTRIES_PER_PAGE=30
 
-urlpatterns = patterns('',
-    (r'jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('membership')}),
+# Brand-spanking new RESTful stuff, for AJAX usage at first (here be pony kittenz)
+urlpatterns = \
+    patterns('',
+             url(r'^api/memberships/new/$',
+                  SQSLMV.as_view(resource=MembershipResource,
+                                   queryset=Membership.objects.filter(status__exact='N'))),
+             url(r'^api/memberships/new/$',
+                  SQSLMV.as_view(resource=MembershipResource,
+                                   queryset=Membership.objects.filter(status__exact='N'))),
+             url(r'^api/memberships/preapproved/$',
+                  SQSLMV.as_view(resource=MembershipResource,
+                                   queryset=Membership.objects.filter(status__exact='P'))),
+             url(r'^api/memberships/all/$',
+                  ListModelView.as_view(resource=MembershipResource)),
+             url(r'^api/memberships/(?P<pk>[^/]+)/$',
+                  EscapedMembershipInstanceView.as_view(resource=MembershipResource)),
 
-    # Brand-spanking new RESTful stuff, for AJAX usage at first
-    url(r'^ajax/memberships/new$', ListOrCreateModelView.as_view(resource=NewMembershipResource)),
-    url(r'^rest/memberships/(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=MembershipResource)),
-    # End of kool kat REST
+             url(r'^api/available/aliases/(?P<name>[^/]+)/$',
+                  AvailableAliasView.as_view()),
+             url(r'^api/valid/aliases/(?P<name>[^/]+)/$',
+                  ValidAliasView.as_view()),
+    )
+# End of kool kat REST
+
+urlpatterns += patterns('',
+    (r'jsi18n/$', 'django.views.i18n.javascript_catalog', {'packages': ('membership')}),
 
     url(r'application/person/$', 'membership.views.person_application', name='person_application'),
     url(r'application/organization/$', 'membership.views.organization_application',
@@ -53,11 +77,6 @@ urlpatterns = patterns('',
 
     url(r'payments/edit/(\d+)/$', 'membership.views.payment_edit', name='payment_edit'),
     url(r'payments/import/$', 'membership.views.import_payments', name='import_payments'),
-
-    # url(r'memberships/new/handle_json/$', 'membership.views.handle_json', name='membership_pre-approval_handle_json'),
-    url(r'memberships/.*/handle_json/$', 'membership.views.handle_json', name='memberships_handle_json'),
-    url(r'memberships/handle_json/$', 'membership.views.handle_json', name='membership_handle_json'),
-    url(r'handle_json/$', 'membership.views.handle_json', name='membership_handle_json'),
 
     url(r'admtool/(\d+)$', 'membership.views.admtool_membership_detail_json', name='admtool'),
     url(r'admtool/lookup/alias/(.+)$', 'membership.views.admtool_lookup_alias_json', name='admtool'),
@@ -211,18 +230,3 @@ urlpatterns += patterns('django.views.generic',
     url(r'application/error/$', 'simple.direct_to_template',
         {'template': 'membership/new_application_error.html'}, name='new_application_error'),
 )
-
-
-
-# from django.conf.urls.defaults import patterns, url
-# from djangorestframework.resources import ModelResource
-# from djangorestframework.views import ListOrCreateModelView, InstanceModelView
-# from myapp.models import MyModel
-
-# class MyResource(ModelResource):
-#     model = MyModel
-
-# urlpatterns = patterns('',
-#     url(r'^$', ListOrCreateModelView.as_view(resource=MyResource)),
-#     url(r'^(?P<pk>[^/]+)/$', InstanceModelView.as_view(resource=MyResource)),
-# )

@@ -4,7 +4,7 @@ import re
 import simplejson
 import logging
 logger = logging.getLogger("services.views")
-from membership.utils import log_change, serializable_membership_info
+from membership.utils import log_change
 from membership.utils import bake_log_entries
 from membership.models import Membership
 from membership.forms import VALID_USERNAME_RE
@@ -87,25 +87,3 @@ def alias_add_for_member(request, id, template_name='membership/membership_add_a
                               {'form': form,
                                'membership': membership },
                               context_instance=RequestContext(request))
-
-
-# FIXME: Here should probably be rate limiting, but it isn't simple.
-# Would this suffice? <http://djangosnippets.org/snippets/2276/>
-# This is called from membership.views.handle_json!
-def check_alias_availability(request, alias):
-    if Alias.objects.filter(name__iexact=alias).count() == 0:
-        return HttpResponse("true", mimetype='text/plain')
-    return HttpResponse("false", mimetype='text/plain')
-
-# This is called from membership.views.handle_json!
-# Public access
-def validate_alias(request, alias):
-    exists = True
-    valid = True
-    if Alias.objects.filter(name__iexact=alias).count() == 0:
-        exists = False
-    if re.match(VALID_USERNAME_RE, alias) == None:
-        valid = False
-    json_obj = {'exists' : exists, 'valid' : valid}
-    return HttpResponse(simplejson.dumps(json_obj, sort_keys=True, indent=4),
-                            mimetype='application/json')
