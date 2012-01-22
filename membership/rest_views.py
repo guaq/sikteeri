@@ -74,6 +74,7 @@ _403_FORBIDDEN_RESPONSE = ErrorResponse(
 
 class MembershipResourcePermission(IsAuthenticated):
     def check_permission(self, user):
+        super(MembershipResourcePermission, self).check_permission(user)
         if not user.has_perm('membership.read_members'):
             raise _403_FORBIDDEN_RESPONSE
 
@@ -82,7 +83,7 @@ class MembershipResourcePermission(IsAuthenticated):
             raise _403_FORBIDDEN_RESPONSE
 
 class EscapedMembershipInstanceView(InstanceModelView, EscapedMembershipResourceJSONView):
-    permissions = (MembershipResourcePermission, )
+    permissions = (MembershipResourcePermission,)
 
 
 # Alias views
