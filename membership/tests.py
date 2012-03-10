@@ -755,16 +755,21 @@ class MemberApplicationTest(TestCase):
 
 
     def test_validate_alias_ajax(self):
-        valid_url = '/membership/api/valid/aliases/%s/'
+        validate_url = '/membership/api/valid/aliases/%s/'
         available_url = '/membership/api/available/aliases/%s/'
 
-        alias = Alias(name='validalias', owner_id=1)
+        alias = Alias(name='first_available_alias', owner_id=1)
+
+        # Validations
+        self.assertEqual(200, self.client.get(validate_url % alias.name).status_code)
+        self.assertEqual(404, self.client.get(validate_url % u'0aoeu').status_code)
+
+        # Availability
         self.assertEqual(200, self.client.get(available_url % alias.name).status_code)
-        self.assertEqual(200, self.client.get(valid_url % alias.name).status_code)
         alias.save()
         self.assertEqual(404, self.client.get(available_url % alias.name).status_code)
-        self.assertEqual(404, self.client.get(valid_url % alias.name).status_code)
         alias.delete()
+
 
 class PhoneNumberFieldTest(TestCase):
     def setUp(self):
@@ -959,3 +964,16 @@ class DecoratorTest(TestCase):
         response2 = dummyView(request)
         self.assertEqual(response2.status_code, 403)
 
+class MembershipResourcePermissionsTest(TestCase):
+    def setUp(self):
+        # login = self.client.login(username='admin', password='dhtn')
+        pass
+
+    def test_public_views(self):
+        r = self.client.get("/membership/api/available/aliases/foo/")
+        self.assertEqual(r.status_code, 200)
+        r = self.client.get("/membership/api/valid/aliases/foo/")
+        self.assertEqual(r.status_code, 200)
+
+    def test_restricted_views(self):
+        pass
