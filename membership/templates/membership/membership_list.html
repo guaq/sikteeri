@@ -2,7 +2,9 @@
 {% load i18n %}
 
 {% block extra_head %}
-    <script type="text/javascript" src="{{ MEDIA_URL }}/membership/static/js/member_list.js"></script>
+    <script type="text/javascript" src="{{ MEDIA_URL }}/membership/static/js/application.js"></script>
+    <!-- <script type="text/javascript" src="{{ MEDIA_URL }}/membership/static/js/member_list.js"></script> -->
+    <script type="text/javascript" src="{{ MEDIA_URL }}/membership/static/js/new_member_list.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -40,76 +42,8 @@
 {% include "membership/paginating_snippet.html" %}
 
 <script type="text/javascript">
-/**
- * Saves preapprove-cart contents. (Preapproves selected members that are in
- * state "New".)
- */
-function preapprove () {
-  var ids = [];
-  $("#preapprovable_cart").children().each(function (idx, object) {
-    var id = $(object).attr("id");
-    ids.push(id);
-  });
-  for (var idx in ids) {
-    var id = ids[idx];
-    // foo, here?
-  }
-  for (var idx in ids) {
-    var id = ids[idx];
-    jQuery.post("../handle_json/", '{"requestType": "PREAPPROVE", "payload": ' + id + '}', function (data) { $("#" + data).remove()});
-  }
-}
-
-function approve () {
-  var ids = [];
-  $("#approvable_cart").children().each(function (idx, object) {
-    var id = $(object).attr("id");
-    ids.push(id);
-  });
-  for (var idx in ids) {
-    var id = ids[idx];
-    // foo, here?
-  }
-  for (var idx in ids) {
-    var id = ids[idx];
-    jQuery.post("../handle_json/", '{"requestType": "APPROVE", "payload": ' + id + '}', function (data) { $("#" + data).remove()});
-  }
-}
-
-/**
- * Adds details to member list items. Also adds a preapprove cart and buttons
- * if the class preapprovable is found from the list item.
- */
-var preApproveCartCreated = false;
-var approveCartCreated = false;
 $("#memberlist").children().each(function (idx, object) {
-  var item = enhanceMemberItem($(object));
-  addMemberDetails(item);
-
-  if ($(object).hasClass("preapprovable")) {
-    if (!preApproveCartCreated) {
-      var cart = $("<div>").addClass("cart");
-      cart.append($("<h3>").html("{% trans "Pre-approve cart" %}"));
-      cart.append($("<ul>").attr("id", "preapprovable_cart"));
-      cart.append($("<input type=\"submit\" value=\"{% trans "Preapprove these" %}\" onclick=\"preapprove()\">"));
-      $("#memberlist").after(cart);
-      preApproveCartCreated = true;
-    }
-    preapproveify(item);
-  }
-
-  if ($(object).hasClass("approvable")) {
-    if (!approveCartCreated) {
-      var cart = $("<div>").addClass("cart");
-      cart.append($("<h3>").html("{% trans "Approve cart" %}"));
-      cart.append($("<ul>").attr("id", "approvable_cart"));
-      cart.append($("<input type=\"submit\" value=\"{% trans "Approve these" %}\" onclick=\"approve()\">"));
-      $("#memberlist").after(cart);
-      approveCartCreated = true;
-    }
-    approveify(item);
-  }
-
+  enhanceMemberItem($(object));
 });
 
 </script>

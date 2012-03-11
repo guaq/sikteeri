@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-09-14 20:08+0300\n"
+"POT-Creation-Date: 2012-03-11 08:15+0200\n"
 "PO-Revision-Date: 2011-04-01 09:13+0300\n"
 "Last-Translator: Joonas Kuorilehto <joneskoo@kapsi.fi>\n"
 "MIME-Version: 1.0\n"
@@ -18,107 +18,107 @@ msgstr ""
 msgid "Membership details"
 msgstr "Jäsenyystiedot"
 
-#: static/js/member_list.js:54
+#: static/js/member_list.js:54 static/js/new_member_list.js:39
 msgid "Type"
 msgstr "Tyyppi"
 
-#: static/js/member_list.js:55
+#: static/js/member_list.js:55 static/js/new_member_list.js:40
 msgid "Status"
 msgstr "Tila"
 
-#: static/js/member_list.js:56
+#: static/js/member_list.js:56 static/js/new_member_list.js:41
 msgid "Created"
 msgstr "Luotu"
 
-#: static/js/member_list.js:57
+#: static/js/member_list.js:57 static/js/new_member_list.js:42
 msgid "Last changed"
 msgstr "Muokattu"
 
-#: static/js/member_list.js:58
+#: static/js/member_list.js:58 static/js/new_member_list.js:43
 msgid "Home municipality"
 msgstr "Kotipaikka"
 
-#: static/js/member_list.js:59
+#: static/js/member_list.js:59 static/js/new_member_list.js:44
 msgid "Nationality"
 msgstr "Kansallisuus"
 
-#: static/js/member_list.js:60
+#: static/js/member_list.js:60 static/js/new_member_list.js:45
 msgid "Visible in the public memberlist"
 msgstr "Näkyvillä julkisessa jäsenluettelossa"
 
-#: static/js/member_list.js:61
+#: static/js/member_list.js:61 static/js/new_member_list.js:46
 msgid "Aliases"
 msgstr "Aliakset"
 
-#: static/js/member_list.js:62
+#: static/js/member_list.js:62 static/js/new_member_list.js:47
 msgid "Services"
 msgstr "Palvelut"
 
-#: static/js/member_list.js:63
+#: static/js/member_list.js:63 static/js/new_member_list.js:48
 msgid "Additional information"
 msgstr "Lisätietoja"
 
-#: static/js/member_list.js:73
+#: static/js/member_list.js:73 static/js/new_member_list.js:50
 msgid "Person contact"
 msgstr "Henkilöyhteystieto"
 
-#: static/js/member_list.js:74
+#: static/js/member_list.js:74 static/js/new_member_list.js:51
 msgid "Billing contact"
 msgstr "Laskutusyhteystieto"
 
-#: static/js/member_list.js:75
+#: static/js/member_list.js:75 static/js/new_member_list.js:52
 msgid "Technical contact"
 msgstr "Tekninen yhteystieto"
 
-#: static/js/member_list.js:76
+#: static/js/member_list.js:76 static/js/new_member_list.js:53
 msgid "Organization"
 msgstr "Yhteisö"
 
-#: static/js/member_list.js:109
+#: static/js/member_list.js:109 static/js/new_member_list.js:55
 msgid "First name"
 msgstr "Kutsumanimi"
 
-#: static/js/member_list.js:110
+#: static/js/member_list.js:110 static/js/new_member_list.js:56
 msgid "Given names"
 msgstr "Etunimet"
 
-#: static/js/member_list.js:111
+#: static/js/member_list.js:111 static/js/new_member_list.js:57
 msgid "Last name"
 msgstr "Sukunimi"
 
-#: static/js/member_list.js:112
+#: static/js/member_list.js:112 static/js/new_member_list.js:58
 msgid "Organization name"
 msgstr "Yhteisön nimi"
 
-#: static/js/member_list.js:113
+#: static/js/member_list.js:113 static/js/new_member_list.js:59
 msgid "Street address"
 msgstr "Katuosoite"
 
-#: static/js/member_list.js:114
+#: static/js/member_list.js:114 static/js/new_member_list.js:60
 msgid "Postal code"
 msgstr "Postinumero"
 
-#: static/js/member_list.js:115
+#: static/js/member_list.js:115 static/js/new_member_list.js:61
 msgid "Post office"
 msgstr "Postitoimipaikka"
 
-#: static/js/member_list.js:116
+#: static/js/member_list.js:116 static/js/new_member_list.js:62
 msgid "Country"
 msgstr "Maa"
 
-#: static/js/member_list.js:117
+#: static/js/member_list.js:117 static/js/new_member_list.js:63
 msgid "Phone number"
 msgstr "Puhelinnumero"
 
-#: static/js/member_list.js:118
+#: static/js/member_list.js:118 static/js/new_member_list.js:64
 msgid "SMS number"
 msgstr "Tekstiviestinumero"
 
-#: static/js/member_list.js:119
+#: static/js/member_list.js:119 static/js/new_member_list.js:65
 msgid "E-mail"
 msgstr "Sähköpostiosoite"
 
-#: static/js/member_list.js:120
+#: static/js/member_list.js:120 static/js/new_member_list.js:66
 msgid "Homepage"
 msgstr "Kotisivu"
 
@@ -149,3 +149,15 @@ msgstr "lisää hyväksyntäkoriin"
 #: static/js/member_list.js:261
 msgid "remove from approve cart"
 msgstr "poista hyväksyntäkorista"
+
+#: static/js/new_member_list.js:38
+msgid "Member id"
+msgstr "Jäsennumero"
+
+#: static/js/new_member_list.js:103
+msgid "no"
+msgstr "ei"
+
+#: static/js/new_member_list.js:105
+msgid "yes"
+msgstr "kyllä"

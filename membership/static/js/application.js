@@ -25,6 +25,9 @@ function aliasAvailable (alias, callbackFunction) {
     }
 }
 
+/**
+ * A caching validity checker for aliases.
+ */
 var aliasValidity = {};
 function aliasValid (alias, callbackFunction) {
     if (aliasValidity[alias] === undefined) {
@@ -48,6 +51,37 @@ function aliasValid (alias, callbackFunction) {
 	callbackFunction(aliasValidity[alias]);
     }
 }
+
+/**
+ * A caching AJAX helper for fetching member details.
+ */
+var memberDetailStore = {};
+function memberDetails (id, callbackFunction) {
+    if (memberDetailStore[id] === undefined) {
+	jQuery.get("../../api/memberships/" + id + "/",
+                   function () {
+		       return function (data) {
+			   memberDetailStore[id] = data;
+			   callbackFunction(data);
+		       }
+		   }());
+    }
+    else {
+	callbackFunction(memberDetailStore[id]);
+    }
+}
+
+function addToCart (cartName, id, successCallback) {
+    jQuery.post("../../api/carts/" + cartName + "/",
+		{"id": id}, successCallback);
+}
+
+function getCartContents (cartName, successCallback) {
+    jQuery.get("../../api/carts/" + cartName + "/",
+	       successCallback);
+}
+
+
 
 function cleanAccents (s) {
     var r=s.toLowerCase();

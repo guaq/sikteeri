@@ -14,6 +14,7 @@ from membership.forms import *
 from membership.rest_views import SpecializedQuerySetListModelView as SQSLMV
 from membership.rest_views import MembershipResource, EscapedMembershipInstanceView
 from membership.rest_views import AvailableAliasView, ValidAliasView
+from membership.rest_views import PreapprovalCart, ApprovalCart
 
 ENTRIES_PER_PAGE=30
 
@@ -38,6 +39,9 @@ urlpatterns = \
                   AvailableAliasView.as_view()),
              url(r'^api/valid/aliases/(?P<name>[^/]+)/$',
                   ValidAliasView.as_view()),
+
+             url(r'^api/carts/preapprove/$', PreapprovalCart.as_view(), name='preapprove-cart'),
+             url(r'^api/carts/approve/$', ApprovalCart.as_view(), name='approve-cart'),
     )
 # End of kool kat REST
 

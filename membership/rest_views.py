@@ -107,6 +107,35 @@ class ValidAliasView(View):
         if re.match(VALID_USERNAME_RE, name) == None:
             logger.debug("Failed alias validity check: %s" % name)
             return Response(status.HTTP_404_NOT_FOUND)
-        logger.debug("Successfull alias validity check: %s" % name)
+        logger.debug("Successful alias validity check: %s" % name)
         return Response(status.HTTP_200_OK,
                         {'name': name, 'valid': True})
+
+class IdShoppingCartView(View):
+    permissions = (MembershipResourcePermission,)
+
+    def _ensure_cart(self, request):
+        if not request.session.has_key(self.__class__.__name__):
+            request.session[self.__class__.__name__] = []
+
+    def get(self, request):
+        self._ensure_cart(request)
+        return request.session[self.__class__.__name__]
+
+    def post(self, request):
+        print request.session
+        self._ensure_cart(request)
+        id = int(request.POST['id'])
+
+        cart = request.session[self.__class__.__name__]
+        cart.append(id)
+        request.session[self.__class__.__name__] = cart
+
+        logger.debug("Added %i to %s cart" % (id, self.__class__.__name__))
+        return Response(status.HTTP_200_OK, id)
+
+class PreapprovalCart(IdShoppingCartView):
+    pass
+
+class ApprovalCart(IdShoppingCartView):
+    pass
