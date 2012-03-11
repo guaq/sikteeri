@@ -41,10 +41,26 @@
 </ul>
 {% include "membership/paginating_snippet.html" %}
 
+<div class="cart preapprove" style="visibility: hidden">
+  <h3>{% trans "Pre-approve cart" %}</h3>
+  <ul id="preapprovable_cart"></ul>
+  <input type="submit"
+	 value="{% trans "Preapprove these" %}"
+	 onclick="preapprove()">
+</div>
+
+<div class="cart approve" style="visibility: hidden">
+  <h3>{% trans "Approve cart" %}</h3>
+  <ul id="approvable_cart"></ul>
+  <input type="submit"
+	 value="{% trans "Approve these" %}"
+	 onclick="approve()">
+</div>
+
+
 <script type="text/javascript">
 $("#memberlist").children().each(function (idx, object) {
   enhanceMemberItem($(object));
 });
-
 </script>
 {% endblock %}

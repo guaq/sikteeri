@@ -59,12 +59,10 @@ var memberDetailStore = {};
 function memberDetails (id, callbackFunction) {
     if (memberDetailStore[id] === undefined) {
 	jQuery.get("../../api/memberships/" + id + "/",
-                   function () {
-		       return function (data) {
-			   memberDetailStore[id] = data;
-			   callbackFunction(data);
-		       }
-		   }());
+		   function (data) {
+		       memberDetailStore[id] = data;
+		       callbackFunction(data);
+		   });
     }
     else {
 	callbackFunction(memberDetailStore[id]);
