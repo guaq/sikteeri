@@ -37,7 +37,7 @@ from services.models import Alias, Service, ServiceType
 
 if Fee.objects.all().count() == 0:
     sys.exit("No fees in the database. Did you load fixtures into the " +
-	     "database first?\n (./manage.py loaddata test_data.json)")
+	     "database first?\n (./manage.py loaddata membership_fees.json)")
 
 user = User.objects.get(id=1)
 
