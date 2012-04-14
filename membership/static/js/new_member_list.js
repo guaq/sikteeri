@@ -69,6 +69,16 @@ function neededTranslations () {
     gettext("Services");
     gettext("Additional information");
 
+    gettext('New');
+    gettext('Pre-approved');
+    gettext('Approved');
+    gettext('Deleted');
+
+    gettext('Person');
+    gettext('Supporting');
+    gettext('Organization');
+    gettext('Honorary');
+
     gettext("Person contact");
     gettext("Billing contact");
     gettext("Technical contact");
@@ -134,6 +144,38 @@ function renderKeyValuePairRow (key, value) {
     	translated = key;
     }
 
+    // Translate membership status; this is a special case and the constants
+    // shouldn't be, but in some Django-generated place.
+    if (key === "status") {
+	var value_translation_key = undefined
+	if (value === 'N') {
+	    value_translation_key = 'New';
+	} else if (value === 'P') {
+	    value_translation_key = 'Pre-approved';
+	} else if (value === 'A') {
+	    value_translation_key = 'Approved';
+	} else if (value === 'D') {
+	    value_translation_key = 'Deleted';
+	}
+	value = gettext(value_translation_key);
+    }
+
+    // Translate membership type; this is another special case and the constants
+    // shouldn't be, but in some Django-generated place.
+    if (key === "type") {
+	var value_translation_key = undefined
+	if (value === 'P') {
+	    value_translation_key = 'Person';
+	} else if (value === 'S') {
+	    value_translation_key = 'Supporting';
+	} else if (value === 'O') {
+	    value_translation_key = 'Organization';
+	} else if (value === 'H') {
+	    value_translation_key = 'Honorary';
+	}
+	value = gettext(value_translation_key);
+    }
+
     var e = $("<tr>").addClass("table_row");
     e.append($("<td>").append(translated).addClass("key_column"));
     e.append($("<td>").append(value).addClass("value_column"));
@@ -166,22 +208,23 @@ function renderObject (obj) {
 
 
 function makeExpandButton (membership, onClickCallback) {
-    var rightTriangle = "▶";
-    var downTriangle = "▼";
+    // var rightTriangle = "▶";
+    // var downTriangle = "▼";
+    var showDetailsText = gettext("show details");
+    var hideDetailsText = gettext("hide details");
 
-    var e = $("<div>");
-    e.text(rightTriangle);
-    e.css("display", "inline");
-    e.css("cursor", "pointer");
+    var e = $('<input type="submit">');
+    e.addClass('expandbutton')
+    e.attr('value', showDetailsText);
+    // e.css("cursor", "pointer");
 
     e.click(function () {
-	console.log("onClick!");
     	onClickCallback();
 
     	if (membership.isOpen) {
-    	    e.text(downTriangle);
+    	    e.attr('value', hideDetailsText);
     	} else {
-    	    e.text(rightTriangle);
+    	    e.attr('value', showDetailsText);
     	}
     });
 
