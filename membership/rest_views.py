@@ -47,7 +47,7 @@ class EscapedMembershipResourceJSONRenderer(JSONRenderer):
             for attr in attrs:
                 if o.has_key(attr):
                     o[attr] = escape(o[attr])
-                    print o, attr
+                    # print o, attr
 
         membership_attrs = ['municipality', 'nationality', 'extra_info']
         contact_attrs = ['first_name', 'given_names', 'last_name',
@@ -123,7 +123,7 @@ class IdShoppingCartView(View):
         return request.session[self.__class__.__name__]
 
     def post(self, request):
-        print request.session
+        # print request.session
         self._ensure_cart(request)
         id = int(request.POST['id'])
 
