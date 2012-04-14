@@ -286,7 +286,7 @@ table.infobox {
 
 /* Payment list */
 .due {
-    font-color: red;
+    color: red;
 }
 
 .ignored {
