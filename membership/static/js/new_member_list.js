@@ -214,7 +214,8 @@ function makeExpandButton (membership, onClickCallback) {
     var hideDetailsText = gettext("hide details");
 
     var e = $('<input type="submit">');
-    e.addClass('expandbutton')
+    e.addClass('memberlist_action_button');
+    e.addClass('cart_function');
     e.attr('value', showDetailsText);
     // e.css("cursor", "pointer");
 
@@ -269,6 +270,69 @@ function makeMembershipInfobox (htmlElement) {
     return e;
 }
 
+var toastTimeout;
+function toast(text) {
+    clearTimeout(toastTimeout);
+    document.getElementById("toast").innerHTML = text;
+    document.getElementById("toast").style.opacity = 1;
+    toastTimeout = setTimeout(function () {
+	document.getElementById("toast").style.opacity=0;
+    }, 1500);
+}
+
+function makeMembershipPreapproveButton(htmlElement) {
+    var e = $('<input type="submit">');
+    e.addClass('memberlist_action_button');
+    e.addClass('cart_function');
+    e.attr('value', gettext("add to pre-approve cart"));
+
+    var id = htmlElement[0].id;
+
+    $(e).click(function () {
+	var success = function () {
+	    toast(gettext("Added to preapprove cart."));
+	}
+
+    	var r = jQuery.post("../../api/carts/preapprove/",
+			    {"id": id},
+			    success);
+	r.error(function(param) {
+	    toast(gettext("Error occured (") + param + gettext("), not added to cart."));
+	});
+    });
+
+    return e;
+}
+
+function makeMembershipApproveButton(htmlElement) {
+    var e = $('<input type="submit">');
+    e.addClass('memberlist_action_button');
+    e.addClass('cart_function');
+    e.attr('value', gettext("add to approve cart"));
+
+    var id = htmlElement[0].id;
+
+    $(e).click(function () {
+	var success = function () {
+	    toast(gettext("Added to approve cart."));
+	}
+
+    	var r = jQuery.post("../../api/carts/approve/",
+			    {"id": id},
+			    success);
+	r.error(function(param) {
+	    toast(gettext("Error occured (") + param + gettext("), not added to cart."));
+	});
+    });
+
+    return e;
+}
+
 function enhanceMemberItem (htmlElement) {
+    if (htmlElement.hasClass("preapprovable")) {
+        htmlElement.append(makeMembershipPreapproveButton(htmlElement));
+    } else if (htmlElement.hasClass("approvable")) {
+        htmlElement.append(makeMembershipApproveButton(htmlElement));
+    }
     htmlElement.append(makeMembershipInfobox(htmlElement));
 }
