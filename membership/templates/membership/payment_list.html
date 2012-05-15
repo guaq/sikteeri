@@ -6,6 +6,22 @@
 {% include "membership/paginating_snippet.html" %}
 
 <ul id="paymentlist">
+  <li class="list_header">
+	<span class="name">
+		<a href="?page={{ page }}{% if search_query %}&query={{ search_query }}{% endif %}&sort={% if sort == "payer_name" %}-{% endif %}payer_name">{% trans "Payer name"|capfirst %}</a>
+	</span>
+	<span class="sum">
+		<a href="?page={{ page }}{% if search_query %}&query={{ search_query }}{% endif %}&sort={% if sort == "amount" %}-{% endif %}amount">{% trans "Sum"|capfirst %}</a></span>
+	<span class="reference">
+		<a href="?page={{ page }}{% if search_query %}&query={{ search_query }}{% endif %}&sort={% if sort == "reference_number" %}-{% endif %}reference_number">{% trans "Reference number"|capfirst %}</a>
+	</span>
+	<span class="paid">
+		<a href="?page={{ page }}{% if search_query %}&query={{ search_query }}{% endif %}&sort={% if sort == "billingcycle" %}-{% endif %}billingcycle">&nbsp;&nbsp;{% trans "Attached"|capfirst %} </a>
+	</span>
+	<span class="comment">
+		<a href="?page={{ page }}{% if search_query %}&query={{ search_query }}{% endif %}&sort={% if sort == "comment" %}-{% endif %}comment">{% trans "Comment"|capfirst %}</a>
+	</span>
+  </li>
   {% for payment in payment_list %}
   <li class="list_item{% if payment.is_due %} due{% endif %}{% if payment.ignore %} ignored{% endif %}">
     <span class="name"><a href="{% url payment_edit payment.id %}">{{ payment.payer_name }}</a></span>
