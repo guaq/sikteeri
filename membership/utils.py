@@ -288,6 +288,36 @@ def tupletuple_to_dict(tupletuple):
         d[key] = value
     return d
 
+def sort_field_dicts(queryset):
+    """
+    Make a list of dicts with titles and sort keys.
+    """
+    model = queryset.model
+    ret = []
+
+    field_names = [field.name for field in model._meta.fields]
+
+    try:
+        for sortkey in queryset.extra_sortkeys():
+            field_names.append(sortkey)
+    except:
+        pass
+
+    for field_name in field_names:
+        asc = {
+            'title': _(u"▲ {0}").format(field_name),
+            'sort_key': u"{0}".format(field_name)
+            }
+
+        desc = {
+            'title': _(u"▼ {0}").format(field_name),
+            'sort_key': u"-{0}".format(field_name)
+            }
+        ret.append(asc)
+        ret.append(desc)
+
+    return ret
+
 def sort_objects(request, **kwargs):
     '''Sorting function for views
     '''
@@ -310,4 +340,10 @@ def sort_objects(request, **kwargs):
             kwargs['queryset'] = kwargs['queryset'].sort(sort)
         except AttributeError:
             kwargs['queryset'] = kwargs['queryset'].order_by(sort)
+
+    extra = kwargs.get('extra_context', {})
+    extra['is_sorted'] = True
+    extra['sortable_fields'] = sort_field_dicts(kwargs['queryset'])
+    kwargs['extra_context'] = extra
+
     return kwargs

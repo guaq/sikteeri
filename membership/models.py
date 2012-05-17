@@ -28,6 +28,7 @@ from email_utils import bill_sender, preapprove_email_sender
 class BillingEmailNotFound(Exception): pass
 class MembershipOperationError(Exception): pass
 class PaymentAttachedError(Exception): pass
+class UnknownSortKey(Exception): pass
 
 MEMBER_TYPES = (('P', _('Person')),
                 ('S', _('Supporting')),
@@ -136,19 +137,35 @@ class MembershipManager(models.Manager):
     def get_query_set(self):
         return MembershipQuerySet(self.model)
 
+
 class MembershipQuerySet(QuerySet):
     def sort(self, sortkey):
         sortkey = sortkey.strip()
-        reverse = False
+
+        if sortkey[0] == '-':
+            reverse = True
+        else:
+            reverse = False
+
+        sortkey = sortkey.lstrip('-')
+        if sortkey not in [field.name for field in self.model._meta.fields] and \
+            sortkey not in self.extra_sortkeys():
+            raise UnknownSortKey(u"Unknown sort key {0}!".format(sortkey))
+
         if sortkey == "name":
-            return self.order_by("person__first_name", "organization__organization_name")
-        elif sortkey == "-name":
-                return self.order_by("person__first_name", "organization__organization_name").reverse()
+            self = self.order_by("person__first_name", "organization__organization_name")
         elif sortkey == "last_name":
-            return self.order_by("person__last_name", "organization__organization_name")
-        elif sortkey == "-last_name":
-            return self.order_by("person__last_name", "organization__organization_name").reverse()
-        return self.order_by(sortkey)
+            self = self.order_by("person__last_name", "organization__organization_name")
+        else:
+            self = self.order_by(sortkey)
+
+        if reverse:
+            self = self.reverse()
+
+        return self
+
+    def extra_sortkeys(self):
+        return ('name', 'last_name')
 
 
 class Membership(models.Model):
@@ -418,21 +435,33 @@ class BillingCycleManager(models.Manager):
 class BillingCycleQuerySet(QuerySet):
     def sort(self, sortkey):
         sortkey = sortkey.strip()
-        reverse = False
-        if sortkey == "name":
-            return self.order_by("membership__person__first_name", "membership__organization__organization_name")
-        elif sortkey == "-name":
-                return self.order_by("membership__person__first_name", "membership__organization__organization_name").reverse()
-        elif sortkey == "last_name":
-            return self.order_by("membership__person__last_name", "membership__organization__organization_name")
-        elif sortkey == "-last_name":
-            return self.order_by("membership__person__last_name", "membership__organization__organization_name").reverse()
-        elif sortkey == "reminder_count":
-            return self.annotate(reminder_sum=Sum('bill__reminder_count')).order_by('reminder_sum')
-        elif sortkey == "-reminder_count":
-            return self.annotate(reminder_sum=Sum('bill__reminder_count')).order_by('reminder_sum').reverse()
-        return self.order_by(sortkey)
 
+        if sortkey[0] == '-':
+            reverse = True
+        else:
+            reverse = False
+
+        sortkey = sortkey.lstrip('-')
+        if sortkey not in [field.name for field in self.model._meta.fields] and \
+            sortkey not in self.extra_sortkeys():
+            raise UnknownSortKey(u"Unknown sort key {0}!".format(sortkey))
+
+        if sortkey == "name":
+            self = self.order_by("membership__person__first_name", "membership__organization__organization_name")
+        elif sortkey == "last_name":
+            self = self.order_by("membership__person__last_name", "membership__organization__organization_name")
+        elif sortkey == "reminder_count":
+            self = self.annotate(reminder_sum=Sum('bill__reminder_count')).order_by('reminder_sum')
+        else:
+            self = self.order_by(sortkey)
+
+        if reverse:
+            self = self.reverse()
+
+        return self
+
+    def extra_sortkeys(self):
+        return ('name', 'last_name', 'reminder_count')
 
 
 class BillingCycle(models.Model):

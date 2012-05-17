@@ -3,21 +3,9 @@
 
 {% block content %}
 {% include "membership/paginating_snippet.html" %}
+{% include "membership/sorting_snippet.html" %}
 
 <ul id="billlist">
-  <li class="list_header">
-	<span class="name"><a href="?page={{ page }}{% if search_query %}&query={{ search_query }}{% endif %}&sort={% if sort == "name" %}-name{% elif sort == "-name" %}last_name{% elif sort == "last_name"%}-last_name{% else %}name{% endif %}">{% trans "Member"|capfirst %}</a></span>
-	<span class="cycle">
-		<a href="?page={{ page }}{% if search_query %}&query={{ search_query }}{% endif %}&sort={% if sort == "start" %}-{% endif %}start">{% trans "Cycle" %}</a>
-	</span>
-	<span class="sum">
-		<a href="?page={{ page }}{% if search_query %}&query={{ search_query }}{% endif %}&sort={% if sort == "sum" %}-{% endif %}sum">{% trans "Sum" %}</a>
-	</span>
-	<span class="paid">
-		<a href="?page={{ page }}{% if search_query %}&query={{ search_query }}{% endif %}&sort={% if sort == "bill__due_date" %}-{% endif %}bill__due_date">&nbsp;&nbsp;{% trans "Due date" %}</a>
-	</span>
-	<span class="comment"><a href="?page={{ page }}{% if search_query %}&query={{ search_query }}{% endif %}&sort={% if sort == "reminder_count" %}-{% endif %}reminder_count">{% trans "Reminder count"|capfirst %}</a></span>
-  </li>
   {% for cycle in cycle_list %}
   {% with cycle.membership as member %}
   {% with cycle.last_bill as last_bill %}
