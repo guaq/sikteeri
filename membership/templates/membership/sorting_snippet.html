@@ -1,0 +1,19 @@
+{% load i18n %}
+{% if is_sorted %}
+<script type="text/javascript">
+function changeSortField(elem) {
+  var value = elem.options[elem.selectedIndex].value;
+  var loc = "?page={{ page }}{% if search_query %}&query={{ search_query }}{% endif %}&sort=" + value;
+  window.location = loc;
+}
+</script>
+
+<div class="sort_field_chooser">
+  {% trans "Sort by" %}
+  <select name="sort_field" onchange="changeSortField(this)">
+  {% for field in sortable_fields %}
+    <option value="{{ field.sort_key }}"{% if sort == field.sort_key %} selected{% endif %}>{{ field.title }}</option>
+  {% endfor %}
+  </select>
+</div>
+{% endif %}
