@@ -2,6 +2,7 @@
 
 import re
 from django import forms
+from django.core import validators
 from django.utils.translation import ugettext_lazy as _
 
 from services.models import Alias
@@ -11,7 +12,18 @@ from datetime import datetime, date, timedelta
 # User login format validation regex
 VALID_USERNAME_RE = r"^[a-z][a-z0-9_]*[a-z0-9]$"
 
+# User name validation regex
+VALID_CONTACT_USER_NAME = r"^[\w -]{3,100}$"
+
 MAX_AGE = 80
+
+class NameValidator(validators.RegexValidator):
+    def __init__(self, *args, **kwargs):
+        kwargs['message'] = _('Name is not valid. Only latin alphabet letters accepted.')
+        kwargs['regex'] = VALID_CONTACT_USER_NAME
+        super(NameValidator, self).__init__(*args, **kwargs)
+
+validate_name = NameValidator()
 
 class LoginField(forms.CharField):
     def __init__(self, *args, **kwargs):
@@ -149,14 +161,15 @@ class BaseContactForm(forms.Form):
 class PersonBaseContactForm(forms.Form):
     first_name = forms.CharField(max_length=40, min_length=1,
                                  error_messages={'required': _('First name required.')},
-                                 label=_('First name'))
+                                 label=_('First name'), validators=[validate_name])
     given_names = forms.CharField(max_length=30, min_length=2,
                                   error_messages={'required': _('Given names required.')},
                                   label=_('Given names'),
-                                  help_text=_('Including first name'))
+                                  help_text=_('Including first name'),
+                                  validators=[validate_name])
     last_name = forms.CharField(max_length=30, min_length=2,
                                 error_messages={'required': _('Last name required.')},
-                                label=_('Last name'))
+                                label=_('Last name'), validators=[validate_name])
 
 class OrganizationBaseContactForm(forms.Form):
     organization_name = forms.CharField(max_length=50, min_length=6, label=_('Organization name'))

@@ -25,6 +25,8 @@ from utils import log_change, tupletuple_to_dict
 from email_utils import send_as_email, send_preapprove_email, send_duplicate_payment_notice
 from email_utils import bill_sender, preapprove_email_sender, duplicate_payment_sender
 
+from forms import validate_name
+
 class BillingEmailNotFound(Exception): pass
 class MembershipOperationError(Exception): pass
 class PaymentAttachedError(Exception): pass
@@ -68,9 +70,12 @@ class Contact(models.Model):
     last_changed = models.DateTimeField(auto_now=True, verbose_name=_('contact changed'))
     created = models.DateTimeField(auto_now_add=True, verbose_name=_('contact created'))
 
-    first_name = models.CharField(max_length=128, verbose_name=_('First name'), blank=True) # Primary first name
-    given_names = models.CharField(max_length=128, verbose_name=_('Given names'), blank=True)
-    last_name = models.CharField(max_length=128, verbose_name=_('Last name'), blank=True)
+    first_name = models.CharField(max_length=128, verbose_name=_('First name'), blank=True,
+                                  validators=[validate_name]) # Primary first name
+    given_names = models.CharField(max_length=128, verbose_name=_('Given names'), blank=True,
+                                   validators=[validate_name])
+    last_name = models.CharField(max_length=128, verbose_name=_('Last name'), blank=True,
+                                 validators=[validate_name])
     organization_name = models.CharField(max_length=256, verbose_name=_('Organization name'), blank=True)
 
     street_address = models.CharField(max_length=128, verbose_name=_('Street address'))

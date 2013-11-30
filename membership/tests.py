@@ -1285,3 +1285,27 @@ class MembershipPaperReminderSentTest(TestCase):
         self.assertEquals(2, len(qs))
         self.assertIn(self.m, qs)
         self.assertIn(self.m2, qs)
+
+
+class NameFieldValidationTest(TestCase):
+    """Name validation for members."""
+    def test_comma_should_not_be_valid(self):
+        self.assertRaises(ValidationError, validate_name, "a, b")
+
+    def test_umlauts_should_be_valid(self):
+        validate_name(u"Yrjö")
+        validate_name(u"Müller")
+        validate_name(u"Räihä")
+        validate_name(u"Castrén")
+
+    def test_chinese_letters_should_not_be_valid(self):
+        self.assertRaises(ValidationError, validate_name, "青岛啤酒厂")
+        self.assertRaises(ValidationError, validate_name, "青島啤酒廠")
+
+    def test_pinyin_should_be_valid(self):
+        validate_name(u"Qīngdǎo píjiǔchǎng")
+
+class ContactModelNameAttributeValidationTest(TestCase):
+    """End-to-end test for name validation."""
+    def test_comma_should_not_be_valid_character(self):
+        self.assertRaises(ValidationError, validate_name, "a, b")
