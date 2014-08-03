@@ -963,7 +963,7 @@ msgstr "&lt; jäsenyys poistettu &gt;"
 
 #: templates/membership/membership_list.html:49
 msgid "show possible duplicates"
-msgstr "Näytä mahdolliset duplikaatit"
+msgstr "näytä mahdolliset duplikaatit"
 
 #: templates/membership/membership_list.html:56
 #: templates/membership/membership_list_inline.html:20
