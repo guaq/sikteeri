@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 from __future__ import print_function
+from operator import itemgetter
 from datetime import datetime
 from optparse import make_option, OptionParser
 
@@ -47,5 +48,5 @@ class Command(BaseCommand):
             'contact.count': Contact.objects.filter(created__gte=after).count,
         }
 
-        for name, callback in sorted(stats.items(), cmp=lambda x, y: x[0] < y[0]):
+        for name, callback in sorted(stats.items(), key=itemgetter(0)):
             print(u"{0}\t{1}".format(name, callback()))
