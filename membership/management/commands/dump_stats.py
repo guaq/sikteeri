@@ -23,6 +23,8 @@ class Command(BaseCommand):
             after = datetime(2000, 1, 1)
 
         b = Bill.objects.filter(created__gte=after)
+        r = b.filter(reminder_count__gt=0)
+        m = Membership.objects.filter(created__gte=after)
         stats = {
             'billingcycles.count': BillingCycle.objects.filter(start__gte=after).count,
             'payments.count': Payment.objects.filter(payment_day__gte=after).count,
@@ -30,12 +32,18 @@ class Command(BaseCommand):
             'bills.unpaid.count': b.filter(billingcycle__is_paid=False).count,
             'bills.paid.count': b.filter(billingcycle__is_paid=True).count,
 
-            'reminders.count': b.filter(reminder_count__gt=0).count,
-            'reminders.email.count': b.filter(reminder_count__gt=0).filter(type='E').count,
-            'reminders.paper.count': b.filter(reminder_count__gt=0).filter(type='P').count,
-            'reminders.sms.count': b.filter(reminder_count__gt=0).filter(type='S').count,
+            'reminders.count': r.count,
+            'reminders.email.count': r.filter(type='E').count,
+            'reminders.paper.count': r.filter(type='P').count,
+            'reminders.sms.count': r.filter(type='S').count,
 
-            'membership.count': Membership.objects.filter(created__gte=after).count,
+            'membership.count': m.count,
+            'membership.new.count': m.filter(status='N').count,
+            'membership.preapproved.count': m.filter(status='P').count,
+            'membership.approved.count': m.filter(status='A').count,
+            'membership.dissociation_requested.count': m.filter(status='S').count,
+            'membership.dissociated.count': m.filter(status='I').count,
+            'membership.deleted.count': m.filter(status='D').count,
             'contact.count': Contact.objects.filter(created__gte=after).count,
         }
 
